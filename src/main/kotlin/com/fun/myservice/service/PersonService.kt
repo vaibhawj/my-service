@@ -5,6 +5,7 @@ import com.`fun`.myservice.dal.PersonRepository
 import org.reactivestreams.Publisher
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Mono
 import reactor.core.publisher.toMono
 import java.util.*
 
@@ -18,11 +19,13 @@ class PersonService {
             val person = com.`fun`.myservice.dal.dto.Person(id = UUID.randomUUID(), firstName = p.firstName, age = p.age)
             person.lastName = p.lastName
 
-            personRepository.save(person).id.toMono()
+            personRepository.save(person).flatMap {
+                it.id.toMono()
+            }
         }
     }
 
-    fun findPerson(id: UUID): Optional<com.`fun`.myservice.dal.dto.Person> {
+    fun findPerson(id: UUID): Mono<com.`fun`.myservice.dal.dto.Person> {
         return personRepository.findById(id)
     }
 

@@ -5,6 +5,7 @@ import com.`fun`.myservice.service.PersonService
 import org.reactivestreams.Publisher
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Mono
 import java.util.*
 
 @RestController
@@ -14,7 +15,7 @@ class PersonController {
     lateinit var service: PersonService
 
     @GetMapping("/persons/{id}")
-    fun list(@PathVariable id: UUID): Optional<com.`fun`.myservice.dal.dto.Person> {
+    fun list(@PathVariable id: UUID): Mono<com.`fun`.myservice.dal.dto.Person> {
         return service.findPerson(id)
     }
 
