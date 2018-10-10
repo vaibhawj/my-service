@@ -1,4 +1,4 @@
-package com.fun.myservice
+package com.`fun`.myservice
 
 import org.junit.Test
 import org.junit.runner.RunWith

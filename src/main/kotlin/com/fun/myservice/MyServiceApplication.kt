@@ -1,4 +1,4 @@
-package com.fun.myservice
+package com.`fun`.myservice
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
