@@ -4,4 +4,3 @@ spring:
       keyspaceName: myDB
       contactPoints: localhost
       port: 9042
-      schemaAction: CREATE_IF_NOT_EXISTS
