@@ -25,8 +25,13 @@ class PersonService {
         }
     }
 
-    fun findPerson(id: UUID): Mono<com.`fun`.myservice.dal.dto.Person> {
-        return personRepository.findById(id)
+    fun findPerson(id: UUID): Mono<Person> {
+        return personRepository.findById(id).map { p -> val out = Person(p.firstName, p.age)
+            out.id = p.id
+            out.lastName = p.lastName
+            out
+        }
+
     }
 
 }

@@ -15,7 +15,7 @@ class PersonController {
     lateinit var service: PersonService
 
     @GetMapping("/persons/{id}")
-    fun list(@PathVariable id: UUID): Publisher <com.`fun`.myservice.dal.dto.Person> {
+    fun list(@PathVariable id: UUID): Publisher <Person> {
         return service.findPerson(id)
     }
 
