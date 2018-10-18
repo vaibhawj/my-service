@@ -2,17 +2,23 @@ package com.`fun`.myservice.service
 
 import com.`fun`.myservice.controller.dto.Person
 import com.`fun`.myservice.dal.PersonRepository
+import com.fasterxml.jackson.databind.JsonNode
+import com.github.fge.jsonpatch.JsonPatch
 import org.reactivestreams.Publisher
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.core.publisher.toMono
 import java.util.*
+import com.fasterxml.jackson.databind.ObjectMapper
+
+
 
 @Service
 class PersonService {
 
-    @Autowired lateinit var personRepository: PersonRepository
+    @Autowired private lateinit var personRepository: PersonRepository
+    @Autowired private lateinit var objectMapper: ObjectMapper
 
     fun createPerson(personInput: Publisher<Person>): Publisher<UUID> {
         return personInput.toMono().flatMap { p ->
@@ -34,20 +40,18 @@ class PersonService {
 
     }
 
-    fun updatePerson(id: UUID, personInput: Publisher<Person>): Publisher<Person> {
+    fun patchPerson(id: UUID, personPatch: JsonPatch): Publisher<Person> {
         val personStored = personRepository.findById(id)
-        val personUpdated = personInput.toMono().flatMap { input ->
-            personStored.flatMap { personInDB ->
-                Optional.ofNullable(input.age).ifPresent { age -> personInDB.age = age }
-                Optional.ofNullable(input.firstName).ifPresent { firstName -> personInDB.firstName = firstName }
-                Optional.ofNullable(input.lastName).ifPresent { lastName -> personInDB.lastName = lastName }
-                personRepository.save(personInDB)
-            }
+
+        val personUpdated = personStored.flatMap { personInDB ->
+            val originalNode = objectMapper.convertValue(personInDB, JsonNode::class.java)
+
+            val patchedNode = personPatch.apply(originalNode)
+            val newPerson = objectMapper.treeToValue(patchedNode, com.`fun`.myservice.dal.dto.Person::class.java)
+            personRepository.save(newPerson)
         }
 
-        return personUpdated.flatMap { t -> val personOutput =  Person(t.firstName, t.age)
-            personOutput.lastName = t.lastName
-            personOutput.id = t.id
+        return personUpdated.flatMap { t -> val personOutput =  Person(t.firstName, t.age, t.id, t.lastName )
             personOutput.toMono()
         }
     }

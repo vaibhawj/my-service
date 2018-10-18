@@ -6,7 +6,6 @@ import com.github.fge.jsonpatch.JsonPatch
 import org.reactivestreams.Publisher
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
-import reactor.core.publisher.Mono
 import java.util.*
 
 @RestController
@@ -27,10 +26,8 @@ class PersonController {
     }
 
     @PatchMapping("/{id}")
-    fun patch(@PathVariable id: UUID, @RequestBody personInput: Publisher<Person>): Publisher<Person> {
-
-        return service.updatePerson(id, personInput)
-
+    fun patch(@PathVariable id: UUID, @RequestBody personPatch: JsonPatch): Publisher<Person> {
+        return service.patchPerson(id, personPatch)
     }
 
 }
