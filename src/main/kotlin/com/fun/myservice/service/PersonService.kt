@@ -3,6 +3,7 @@ package com.`fun`.myservice.service
 import com.`fun`.myservice.controller.dto.Person
 import com.`fun`.myservice.dal.PersonRepository
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.fge.jsonpatch.JsonPatch
 import org.reactivestreams.Publisher
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,8 +11,6 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.core.publisher.toMono
 import java.util.*
-import com.fasterxml.jackson.databind.ObjectMapper
-
 
 
 @Service
@@ -22,8 +21,7 @@ class PersonService {
 
     fun createPerson(personInput: Publisher<Person>): Publisher<UUID> {
         return personInput.toMono().flatMap { p ->
-            val person = com.`fun`.myservice.dal.dto.Person(id = UUID.randomUUID(), firstName = p.firstName, age = p.age)
-            person.lastName = p.lastName
+            val person = com.`fun`.myservice.dal.dto.Person(id = UUID.randomUUID(), firstName = p.firstName, lastName = p.lastName, age = p.age)
 
             personRepository.save(person).flatMap {
                 it.id.toMono()
@@ -32,10 +30,8 @@ class PersonService {
     }
 
     fun findPerson(id: UUID): Mono<Person> {
-        return personRepository.findById(id).map { p -> val out = Person(firstName = p.firstName, age = p.age)
-            out.id = p.id
-            out.lastName = p.lastName
-            out
+        return personRepository.findById(id).map { p ->
+            Person(id = p.id, firstName = p.firstName, lastName = p.lastName, age = p.age)
         }
 
     }
@@ -51,7 +47,7 @@ class PersonService {
             personRepository.save(newPerson)
         }
 
-        return personUpdated.flatMap { t -> val personOutput =  Person(t.firstName, t.age, t.id, t.lastName )
+        return personUpdated.flatMap { t -> val personOutput =  Person(id= t.id, firstName = t.firstName, lastName =  t.lastName, age = t.age)
             personOutput.toMono()
         }
     }
