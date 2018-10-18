@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		kotlinVersion = '1.2.51'
+		kotlinVersion = '1.2.41'
 		springBootVersion = '2.0.5.RELEASE'
 	}
 	repositories {
@@ -46,6 +46,7 @@ dependencies {
 	implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("com.github.fge:json-patch:1.9")
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testImplementation('io.projectreactor:reactor-test')
 }

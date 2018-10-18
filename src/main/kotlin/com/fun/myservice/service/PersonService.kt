@@ -26,7 +26,7 @@ class PersonService {
     }
 
     fun findPerson(id: UUID): Mono<Person> {
-        return personRepository.findById(id).map { p -> val out = Person(p.firstName, p.age)
+        return personRepository.findById(id).map { p -> val out = Person(firstName = p.firstName, age = p.age)
             out.id = p.id
             out.lastName = p.lastName
             out
@@ -34,4 +34,21 @@ class PersonService {
 
     }
 
+    fun updatePerson(id: UUID, personInput: Publisher<Person>): Publisher<Person> {
+        val personStored = personRepository.findById(id)
+        val personUpdated = personInput.toMono().flatMap { input ->
+            personStored.flatMap { personInDB ->
+                Optional.ofNullable(input.age).ifPresent { age -> personInDB.age = age }
+                Optional.ofNullable(input.firstName).ifPresent { firstName -> personInDB.firstName = firstName }
+                Optional.ofNullable(input.lastName).ifPresent { lastName -> personInDB.lastName = lastName }
+                personRepository.save(personInDB)
+            }
+        }
+
+        return personUpdated.flatMap { t -> val personOutput =  Person(t.firstName, t.age)
+            personOutput.lastName = t.lastName
+            personOutput.id = t.id
+            personOutput.toMono()
+        }
+    }
 }
