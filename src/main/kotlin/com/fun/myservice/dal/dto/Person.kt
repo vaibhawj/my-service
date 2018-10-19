@@ -9,4 +9,5 @@ import java.util.*
 data class Person(@PrimaryKey var id: UUID,
                   @Column var firstName: String?,
                   @Column var lastName: String?,
-                  @Column var age: Int?)
+                  @Column var age: Int?,
+                  @Column var contact: Map<String, String>?)
