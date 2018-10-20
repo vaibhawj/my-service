@@ -6,8 +6,15 @@ import org.springframework.data.cassandra.core.mapping.Table
 import java.util.*
 
 @Table
-data class Person(@PrimaryKey var id: UUID,
-                  @Column var firstName: String?,
-                  @Column var lastName: String?,
-                  @Column var age: Int?,
-                  @Column var contact: Map<String, String>?)
+data class Person(@PrimaryKey val id: UUID,
+                  @Column val firstName: String?,
+                  @Column val lastName: String?,
+                  @Column val age: Int?,
+                  @Column val contact: Map<String, String>?)
+
+data class PersonPatch(
+    val firstName: String?,
+    val lastName: String?,
+    val age: Int?,
+    val contact: Map<String, String>?
+)

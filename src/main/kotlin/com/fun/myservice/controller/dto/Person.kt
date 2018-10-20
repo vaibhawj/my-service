@@ -2,11 +2,15 @@ package com.`fun`.myservice.controller.dto
 
 import java.util.*
 
-data class Person(var id: UUID?,
-                  var firstName: String?,
-                  var lastName: String?,
-                  var age: Int?,
-                  var contact: Contact?)
+data class Person(
+    val id: UUID?,
+    val firstName: String?,
+    val lastName: String?,
+    val age: Int?,
+    val contact: Contact?
+)
 
-data class Contact(var homePhone: String?,
-                   var mobilePhone: String?)
+data class Contact(
+    val homePhone: String?,
+    val mobilePhone: String?
+)

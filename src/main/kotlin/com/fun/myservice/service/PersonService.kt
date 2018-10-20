@@ -3,6 +3,7 @@ package com.`fun`.myservice.service
 import com.`fun`.myservice.controller.dto.Contact
 import com.`fun`.myservice.controller.dto.Person
 import com.`fun`.myservice.dal.PersonRepository
+import com.`fun`.myservice.dal.dto.PersonPatch
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.fge.jsonpatch.JsonPatch
@@ -41,15 +42,17 @@ class PersonService {
 
     }
 
-    fun patchPerson(id: UUID, personPatch: JsonPatch): Publisher<Person> {
+    fun patchPerson(id: UUID, personPatchRequest: JsonPatch): Publisher<Person> {
         val personStored = personRepository.findById(id)
 
-        val personUpdated = personStored.map { personInDB ->
-            val originalNode = objectMapper.convertValue(personInDB, JsonNode::class.java)
+        val personUpdated = personStored.map { p ->
+            val personOriginal = PersonPatch(firstName = p.firstName, lastName = p.lastName, age = p.age, contact = p.contact)
+            val originalNode = objectMapper.convertValue(personOriginal, JsonNode::class.java)
 
-            val patchedNode = personPatch.apply(originalNode)
-            val newPerson = objectMapper.treeToValue(patchedNode, com.`fun`.myservice.dal.dto.Person::class.java)
-            personRepository.save(newPerson)
+            val patchedNode = personPatchRequest.apply(originalNode)
+            val personPatched = objectMapper.treeToValue(patchedNode, com.`fun`.myservice.dal.dto.PersonPatch::class.java)
+            val personToSave = com.`fun`.myservice.dal.dto.Person(id = p.id, firstName = personPatched.firstName, lastName = personPatched.lastName, age = personPatched.age, contact = personPatched.contact )
+            personRepository.save(personToSave)
         }
 
         return personUpdated.flatMap { personMono ->
