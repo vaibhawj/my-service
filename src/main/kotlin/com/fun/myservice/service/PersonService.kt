@@ -18,8 +18,10 @@ import java.util.*
 @Service
 class PersonService {
 
-    @Autowired private lateinit var personRepository: PersonRepository
-    @Autowired private lateinit var objectMapper: ObjectMapper
+    @Autowired
+    private lateinit var personRepository: PersonRepository
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
 
     fun createPerson(personInput: Publisher<Person>): Publisher<UUID> {
         return personInput.toMono().flatMap { p ->
@@ -27,7 +29,13 @@ class PersonService {
             p.contact?.homePhone?.let { contact.put("homePhone", it) }
             p.contact?.mobilePhone?.let { contact.put("mobilePhone", it) }
 
-            val person = com.`fun`.myservice.dal.dto.Person(id = UUID.randomUUID(), firstName = p.firstName, lastName = p.lastName, age = p.age, contact = contact)
+            val person = com.`fun`.myservice.dal.dto.Person(
+                id = UUID.randomUUID(),
+                firstName = p.firstName,
+                lastName = p.lastName,
+                age = p.age,
+                contact = contact
+            )
 
             personRepository.save(person).flatMap {
                 it.id.toMono()
@@ -37,7 +45,13 @@ class PersonService {
 
     fun findPerson(id: UUID): Mono<Person> {
         return personRepository.findById(id).map { p ->
-            Person(id = p.id, firstName = p.firstName, lastName = p.lastName, age = p.age, contact = Contact(p.contact?.get("homePhone"), p.contact?.get("mobilePhone")))
+            Person(
+                id = p.id,
+                firstName = p.firstName,
+                lastName = p.lastName,
+                age = p.age,
+                contact = Contact(p.contact?.get("homePhone"), p.contact?.get("mobilePhone"))
+            )
         }
 
     }
@@ -46,18 +60,34 @@ class PersonService {
         val personStored = personRepository.findById(id)
 
         val personUpdated = personStored.map { p ->
-            val personOriginal = PersonPatch(firstName = p.firstName, lastName = p.lastName, age = p.age, contact = p.contact)
-            val originalNode = objectMapper.convertValue(personOriginal, JsonNode::class.java)
+            val personOriginal =
+                PersonPatch(firstName = p.firstName, lastName = p.lastName, age = p.age, contact = p.contact)
 
-            val patchedNode = personPatchRequest.apply(originalNode)
-            val personPatched = objectMapper.treeToValue(patchedNode, com.`fun`.myservice.dal.dto.PersonPatch::class.java)
-            val personToSave = com.`fun`.myservice.dal.dto.Person(id = p.id, firstName = personPatched.firstName, lastName = personPatched.lastName, age = personPatched.age, contact = personPatched.contact )
+            val personPatched = objectMapper.treeToValue(
+                personPatchRequest.apply(objectMapper.convertValue(personOriginal, JsonNode::class.java)),
+                com.`fun`.myservice.dal.dto.PersonPatch::class.java
+            )
+            val personToSave = com.`fun`.myservice.dal.dto.Person(
+                id = p.id,
+                firstName = personPatched.firstName,
+                lastName = personPatched.lastName,
+                age = personPatched.age,
+                contact = personPatched.contact
+            )
             personRepository.save(personToSave)
         }
 
         return personUpdated.flatMap { personMono ->
-            personMono.flatMap { p ->  val personOutput =  Person(id= p.id, firstName = p.firstName, lastName =  p.lastName, age = p.age, contact = Contact(p.contact?.get("homePhone"), p.contact?.get("mobilePhone")))
-                personOutput.toMono()}
+            personMono.flatMap { p ->
+                val personOutput = Person(
+                    id = p.id,
+                    firstName = p.firstName,
+                    lastName = p.lastName,
+                    age = p.age,
+                    contact = Contact(p.contact?.get("homePhone"), p.contact?.get("mobilePhone"))
+                )
+                personOutput.toMono()
+            }
 
         }
     }
