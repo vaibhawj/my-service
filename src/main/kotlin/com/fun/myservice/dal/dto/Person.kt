@@ -10,7 +10,7 @@ data class Person(@PrimaryKey val id: UUID,
                   @Column val firstName: String?,
                   @Column val lastName: String?,
                   @Column val age: Int?,
-                  @Column val contact: Map<String, String>?)
+                  @Column val contact: Map<String, String>? = mapOf())
 
 data class PersonPatch(
     val firstName: String?,
