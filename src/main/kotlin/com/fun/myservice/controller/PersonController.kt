@@ -1,5 +1,6 @@
 package com.`fun`.myservice.controller
 
+import com.`fun`.myservice.controller.annotations.PatchDispatcher
 import com.`fun`.myservice.controller.dto.Person
 import com.`fun`.myservice.service.PersonService
 import com.github.fge.jsonpatch.JsonPatch
@@ -30,8 +31,8 @@ class PersonController {
 
     @PatchMapping("/{id}")
     fun patch(@PathVariable id: UUID, @RequestBody personPatch: JsonPatch): Publisher<Person> {
-        patchDispatcher.dispatch(id, personPatch)
-        return service.patchPerson(id, personPatch)
+        return patchDispatcher.dispatch(id, personPatch) as Publisher<Person>
+//        return service.patchPerson(id, personPatch)
     }
 
 }

@@ -1,4 +1,4 @@
-package com.`fun`.myservice.controller
+package com.`fun`.myservice.controller.annotations
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
