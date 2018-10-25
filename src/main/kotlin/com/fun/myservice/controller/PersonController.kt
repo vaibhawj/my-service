@@ -15,6 +15,9 @@ class PersonController {
     @Autowired
     lateinit var service: PersonService
 
+    @Autowired
+    lateinit var patchDispatcher: PatchDispatcher
+
     @GetMapping("/{id}")
     fun list(@PathVariable id: UUID): Publisher <Person> {
         return service.findPerson(id)
@@ -27,6 +30,7 @@ class PersonController {
 
     @PatchMapping("/{id}")
     fun patch(@PathVariable id: UUID, @RequestBody personPatch: JsonPatch): Publisher<Person> {
+        patchDispatcher.dispatch(id, personPatch)
         return service.patchPerson(id, personPatch)
     }
 
