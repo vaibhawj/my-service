@@ -16,8 +16,13 @@ class PersonController {
     lateinit var service: PersonService
 
     @GetMapping("/{id}")
-    fun list(@PathVariable id: UUID): Publisher <Person> {
+    fun find(@PathVariable id: UUID): Publisher <Person> {
         return service.findPerson(id)
+    }
+
+    @GetMapping
+    fun list(): Publisher <Person> {
+        return service.findAll()
     }
 
     @PostMapping

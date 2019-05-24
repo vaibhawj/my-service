@@ -4,6 +4,7 @@ import com.`fun`.myservice.controller.dto.Contact
 import com.`fun`.myservice.controller.dto.Person
 import com.`fun`.myservice.dal.PersonRepository
 import com.`fun`.myservice.dal.dto.PersonPatch
+import com.`fun`.myservice.exception.NotFoundException
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.fge.jsonpatch.JsonPatch
@@ -30,11 +31,11 @@ class PersonService {
             p.contact?.mobilePhone?.let { contact.put("mobilePhone", it) }
 
             val person = com.`fun`.myservice.dal.dto.Person(
-                id = UUID.randomUUID(),
-                firstName = p.firstName,
-                lastName = p.lastName,
-                age = p.age,
-                contact = contact
+                    id = UUID.randomUUID(),
+                    firstName = p.firstName,
+                    lastName = p.lastName,
+                    age = p.age,
+                    contact = contact
             )
 
             personRepository.save(person).flatMap {
@@ -44,13 +45,13 @@ class PersonService {
     }
 
     fun findPerson(id: UUID): Mono<Person> {
-        return personRepository.findById(id).map { p ->
+        return personRepository.findById(id).switchIfEmpty(Mono.error(NotFoundException())).map { p ->
             Person(
-                id = p.id,
-                firstName = p.firstName,
-                lastName = p.lastName,
-                age = p.age,
-                contact = Contact(p.contact?.get("homePhone"), p.contact?.get("mobilePhone"))
+                    id = p.id,
+                    firstName = p.firstName,
+                    lastName = p.lastName,
+                    age = p.age,
+                    contact = Contact(p.contact?.get("homePhone"), p.contact?.get("mobilePhone"))
             )
         }
 
@@ -61,18 +62,18 @@ class PersonService {
 
         val personUpdated = personStored.map { p ->
             val personOriginal =
-                PersonPatch(firstName = p.firstName, lastName = p.lastName, age = p.age, contact = p.contact)
+                    PersonPatch(firstName = p.firstName, lastName = p.lastName, age = p.age, contact = p.contact)
 
             val personPatched = objectMapper.treeToValue(
-                personPatchRequest.apply(objectMapper.convertValue(personOriginal, JsonNode::class.java)),
-                com.`fun`.myservice.dal.dto.PersonPatch::class.java
+                    personPatchRequest.apply(objectMapper.convertValue(personOriginal, JsonNode::class.java)),
+                    com.`fun`.myservice.dal.dto.PersonPatch::class.java
             )
             val personToSave = com.`fun`.myservice.dal.dto.Person(
-                id = p.id,
-                firstName = personPatched.firstName,
-                lastName = personPatched.lastName,
-                age = personPatched.age,
-                contact = personPatched.contact
+                    id = p.id,
+                    firstName = personPatched.firstName,
+                    lastName = personPatched.lastName,
+                    age = personPatched.age,
+                    contact = personPatched.contact
             )
             personRepository.save(personToSave)
         }
@@ -80,15 +81,29 @@ class PersonService {
         return personUpdated.flatMap { personMono ->
             personMono.flatMap { p ->
                 val personOutput = Person(
-                    id = p.id,
-                    firstName = p.firstName,
-                    lastName = p.lastName,
-                    age = p.age,
-                    contact = Contact(p.contact?.get("homePhone"), p.contact?.get("mobilePhone"))
+                        id = p.id,
+                        firstName = p.firstName,
+                        lastName = p.lastName,
+                        age = p.age,
+                        contact = Contact(p.contact?.get("homePhone"), p.contact?.get("mobilePhone"))
                 )
                 personOutput.toMono()
             }
 
         }
+    }
+
+    fun findAll(): Publisher<Person> {
+        return personRepository.findAll()
+                .switchIfEmpty { it.onError(NotFoundException()) }
+                .map {
+                    Person(
+                            id = it.id,
+                            firstName = it.firstName,
+                            lastName = it.lastName,
+                            age = it.age,
+                            contact = Contact(it.contact?.get("homePhone"), it.contact?.get("mobilePhone"))
+                    )
+                }
     }
 }
