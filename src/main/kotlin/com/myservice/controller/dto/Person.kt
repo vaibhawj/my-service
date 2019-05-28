@@ -1,4 +1,4 @@
-package com.`fun`.myservice.controller.dto
+package com.myservice.controller.dto
 
 import java.util.*
 

@@ -1,4 +1,4 @@
-package com.`fun`.myservice.config
+package com.myservice.config
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
@@ -32,7 +32,7 @@ class CassandraConfig(@Value("\${spring.data.cassandra.keyspaceName}") val keysp
     }
 
     override fun getEntityBasePackages(): Array<String> {
-        return listOf("com.fun.myservice.dal.dto").toTypedArray()
+        return listOf("com.myservice.dal.dto").toTypedArray()
     }
 
 

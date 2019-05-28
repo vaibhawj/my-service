@@ -1,10 +1,10 @@
-package com.`fun`.myservice.service
+package com.myservice.service
 
-import com.`fun`.myservice.controller.dto.Contact
-import com.`fun`.myservice.controller.dto.Person
-import com.`fun`.myservice.dal.PersonRepository
-import com.`fun`.myservice.dal.dto.PersonPatch
-import com.`fun`.myservice.exception.NotFoundException
+import com.myservice.controller.dto.Contact
+import com.myservice.controller.dto.Person
+import com.myservice.dal.PersonRepository
+import com.myservice.dal.dto.PersonPatch
+import com.myservice.exception.NotFoundException
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.fge.jsonpatch.JsonPatch
@@ -30,7 +30,7 @@ class PersonService {
             p.contact?.homePhone?.let { contact.put("homePhone", it) }
             p.contact?.mobilePhone?.let { contact.put("mobilePhone", it) }
 
-            val person = com.`fun`.myservice.dal.dto.Person(
+            val person = com.myservice.dal.dto.Person(
                     id = UUID.randomUUID(),
                     firstName = p.firstName,
                     lastName = p.lastName,
@@ -66,9 +66,9 @@ class PersonService {
 
             val personPatched = objectMapper.treeToValue(
                     personPatchRequest.apply(objectMapper.convertValue(personOriginal, JsonNode::class.java)),
-                    com.`fun`.myservice.dal.dto.PersonPatch::class.java
+                    PersonPatch::class.java
             )
-            val personToSave = com.`fun`.myservice.dal.dto.Person(
+            val personToSave = com.myservice.dal.dto.Person(
                     id = p.id,
                     firstName = personPatched.firstName,
                     lastName = personPatched.lastName,

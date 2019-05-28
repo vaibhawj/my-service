@@ -1,8 +1,11 @@
-package com.`fun`.myservice.controller
+package com.myservice.controller
 
-import com.`fun`.myservice.controller.dto.Person
-import com.`fun`.myservice.service.PersonService
+import com.myservice.controller.dto.Person
+import com.myservice.service.PersonService
 import com.github.fge.jsonpatch.JsonPatch
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiParam
+import io.swagger.annotations.Example
 import org.reactivestreams.Publisher
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*

@@ -19,7 +19,7 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
-group = 'com.fun'
+group = 'com.myservice'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 compileKotlin {
@@ -37,6 +37,9 @@ compileTestKotlin {
 
 repositories {
 	mavenCentral()
+	maven {
+		url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/'
+	}
 }
 
 
@@ -44,10 +47,14 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-data-cassandra-reactive')
 	implementation('org.springframework.boot:spring-boot-starter-webflux')
 	implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
-	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("com.github.fge:json-patch:1.9")
-    implementation("org.springframework:spring-aspects:5.1.2.RELEASE")
+	implementation('org.jetbrains.kotlin:kotlin-stdlib-jdk8')
+	implementation('org.jetbrains.kotlin:kotlin-reflect')
+	implementation('com.github.fge:json-patch:1.9')
+    implementation('org.springframework:spring-aspects:5.1.2.RELEASE')
+	implementation('io.springfox:springfox-swagger2:3.0.0-SNAPSHOT')
+	implementation('io.springfox:springfox-swagger-ui:3.0.0-SNAPSHOT')
+	implementation('io.springfox:springfox-spring-webflux:3.0.0-SNAPSHOT')
+
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testImplementation('io.projectreactor:reactor-test')
 }

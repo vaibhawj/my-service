@@ -1,4 +1,4 @@
-package com.`fun`.myservice.logging
+package com.myservice.logging
 
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
@@ -10,7 +10,7 @@ import org.springframework.util.StopWatch
 @Aspect
 class DataAccessLogger {
 
-    @Around("execution(* com.fun.myservice.dal.PersonRepository.*(*))")
+    @Around("execution(* com.myservice.dal.PersonRepository.*(*))")
     fun logTime(pjp: ProceedingJoinPoint): Any{
 
         val stopWatch = StopWatch()

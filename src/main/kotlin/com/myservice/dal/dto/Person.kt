@@ -1,4 +1,4 @@
-package com.`fun`.myservice.dal.dto
+package com.myservice.dal.dto
 
 import org.springframework.data.cassandra.core.mapping.Column
 import org.springframework.data.cassandra.core.mapping.PrimaryKey

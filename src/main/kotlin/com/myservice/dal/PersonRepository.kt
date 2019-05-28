@@ -1,6 +1,6 @@
-package com.`fun`.myservice.dal
+package com.myservice.dal
 
-import com.`fun`.myservice.dal.dto.Person
+import com.myservice.dal.dto.Person
 import org.springframework.data.cassandra.repository.ReactiveCassandraRepository
 import org.springframework.stereotype.Repository
 import java.util.*

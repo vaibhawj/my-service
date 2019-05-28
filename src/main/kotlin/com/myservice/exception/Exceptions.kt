@@ -1,4 +1,4 @@
-package com.`fun`.myservice.exception
+package com.myservice.exception
 
 import java.lang.RuntimeException
 

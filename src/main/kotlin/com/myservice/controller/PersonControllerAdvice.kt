@@ -1,6 +1,6 @@
-package com.`fun`.myservice.controller
+package com.myservice.controller
 
-import com.`fun`.myservice.exception.NotFoundException
+import com.myservice.exception.NotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
