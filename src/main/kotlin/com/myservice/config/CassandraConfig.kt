@@ -3,15 +3,21 @@ package com.myservice.config
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.cassandra.config.AbstractReactiveCassandraConfiguration
+import org.springframework.data.cassandra.config.CassandraClusterFactoryBean
 import org.springframework.data.cassandra.config.SchemaAction
 import org.springframework.data.cassandra.repository.config.EnableReactiveCassandraRepositories
 
 @Configuration
 @EnableReactiveCassandraRepositories
-class CassandraConfig(@Value("\${spring.data.cassandra.keyspaceName}") val keyspace: String): AbstractReactiveCassandraConfiguration() {
+class CassandraConfig(
+        @Value("\${spring.data.cassandra.keyspaceName}") private val keyspace: String,
+        @Value("\${spring.data.cassandra.username}") private val username: String,
+        @Value("\${spring.data.cassandra.password}") private val password: String,
+        @Value("\${spring.data.cassandra.contactPoint}") private val contactPoint: String
+) : AbstractReactiveCassandraConfiguration() {
 
     override fun getKeyspaceName(): String {
-        return keyspace;
+        return keyspace
     }
 
     override fun getStartupScripts(): MutableList<String> {
@@ -35,5 +41,11 @@ class CassandraConfig(@Value("\${spring.data.cassandra.keyspaceName}") val keysp
         return listOf("com.myservice.dal.dto").toTypedArray()
     }
 
-
+    override fun cluster(): CassandraClusterFactoryBean {
+        val clusterFactoryBean = super.cluster()
+        clusterFactoryBean.setUsername(username)
+        clusterFactoryBean.setPassword(password)
+        clusterFactoryBean.setContactPoints(contactPoint)
+        return clusterFactoryBean
+    }
 }
