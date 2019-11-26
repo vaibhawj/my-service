@@ -11,6 +11,7 @@ import com.github.fge.jsonpatch.JsonPatch
 import org.reactivestreams.Publisher
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.publisher.toMono
 import java.util.*
@@ -24,8 +25,8 @@ class PersonService {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
-    fun createPerson(personInput: Publisher<Person>): Publisher<UUID> {
-        return personInput.toMono().flatMap { p ->
+    fun createPerson(personInput: Mono<Person>): Mono<UUID> {
+        return personInput.flatMap { p ->
             var contact = mutableMapOf<String, String>()
             p.contact?.homePhone?.let { contact.put("homePhone", it) }
             p.contact?.mobilePhone?.let { contact.put("mobilePhone", it) }
@@ -57,7 +58,7 @@ class PersonService {
 
     }
 
-    fun patchPerson(id: UUID, personPatchRequest: JsonPatch): Publisher<Person> {
+    fun patchPerson(id: UUID, personPatchRequest: JsonPatch): Mono<Person> {
         val personStored = personRepository.findById(id)
 
         val personUpdated = personStored.map { p ->
@@ -93,7 +94,7 @@ class PersonService {
         }
     }
 
-    fun findAll(): Publisher<Person> {
+    fun findAll(): Flux<Person> {
         return personRepository.findAll()
                 .switchIfEmpty { it.onError(NotFoundException()) }
                 .map {
