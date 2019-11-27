@@ -28,8 +28,10 @@ class PersonController {
     }
 
     @PostMapping(consumes = ["application/json"], produces = ["application/json"])
-    fun create(@RequestBody personInput:  Mono<Person>): Mono<UUID> {
-        return service.createPerson(personInput)
+    fun create(@RequestBody personInput:  Mono<Person>): Mono<Map<String, UUID>> {
+        return service.createPerson(personInput).map {
+            mapOf("id" to it)
+        }
     }
 
     @PatchMapping(value = ["/{id}"], consumes = ["application/json"], produces = ["application/json"])

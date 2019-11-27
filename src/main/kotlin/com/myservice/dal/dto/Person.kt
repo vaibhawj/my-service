@@ -7,9 +7,9 @@ import java.util.*
 
 @Table
 data class Person(@PrimaryKey val id: UUID,
-                  @Column val firstName: String?,
-                  @Column val lastName: String?,
-                  @Column val age: Int?,
+                  @Column val firstName: String? = null,
+                  @Column val lastName: String? = null,
+                  @Column val age: Int? = null,
                   @Column val contact: Map<String, String>? = mapOf())
 
 data class PersonPatch(

@@ -3,14 +3,14 @@ package com.myservice.controller.dto
 import java.util.*
 
 data class Person(
-    val id: UUID?,
-    val firstName: String?,
-    val lastName: String?,
-    val age: Int?,
-    val contact: Contact?
+    val id: UUID? = null,
+    val firstName: String? = null,
+    val lastName: String? = null,
+    val age: Int? = null,
+    val contact: Contact? = null
 )
 
 data class Contact(
-    val homePhone: String?,
-    val mobilePhone: String?
+    val homePhone: String? = null,
+    val mobilePhone: String? = null
 )
