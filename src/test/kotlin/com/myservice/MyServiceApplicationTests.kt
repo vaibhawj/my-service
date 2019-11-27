@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -31,7 +30,6 @@ class MyServiceApplicationTests {
 
     @Test
     fun `post person`() {
-
         val id = "c89429aa-10be-11ea-8d71-362b9e155667"
         every { personRepository.save(any<PersonDB>()) }.returns(PersonDB(UUID.fromString(id)).toMono())
 
