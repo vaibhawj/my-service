@@ -3,6 +3,7 @@ package com.myservice.controller
 import com.myservice.controller.dto.Person
 import com.myservice.service.PersonService
 import com.github.fge.jsonpatch.JsonPatch
+import com.myservice.controller.dto.CreateResponse
 import org.reactivestreams.Publisher
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -28,9 +29,9 @@ class PersonController {
     }
 
     @PostMapping(consumes = ["application/json"], produces = ["application/json"])
-    fun create(@RequestBody personInput:  Mono<Person>): Mono<Map<String, UUID>> {
+    fun create(@RequestBody personInput:  Mono<Person>): Mono<CreateResponse> {
         return service.createPerson(personInput).map {
-            mapOf("id" to it)
+            CreateResponse(it)
         }
     }
 

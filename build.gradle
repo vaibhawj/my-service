@@ -51,6 +51,7 @@ dependencies {
 	implementation('com.github.fge:json-patch:1.9')
     implementation('org.springframework:spring-aspects:5.2.1.RELEASE')
 	implementation('org.springdoc:springdoc-openapi-webflux-ui:1.2.11')
+	implementation('com.google.code.gson:gson:2.8.6')
 
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testImplementation('org.junit.jupiter:junit-jupiter-api:5.5.0')

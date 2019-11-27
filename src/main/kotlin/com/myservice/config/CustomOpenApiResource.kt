@@ -10,4 +10,5 @@ import org.springframework.web.reactive.result.method.RequestMappingInfoHandlerM
 import java.util.*
 
 @RestController
-class CustomOpenApiResource(openAPIBuilder: OpenAPIBuilder?, requestBuilder: CustomRequestBuilder?, responseBuilder: AbstractResponseBuilder?, operationParser: OperationBuilder?, requestMappingHandlerMapping: RequestMappingInfoHandlerMapping?, openApiCustomisers: Optional<MutableList<OpenApiCustomiser>>?) : OpenApiResource(openAPIBuilder, requestBuilder, responseBuilder, operationParser, requestMappingHandlerMapping, openApiCustomisers)
+class CustomOpenApiResource(openAPIBuilder: OpenAPIBuilder?, requestBuilder: CustomRequestBuilder?, responseBuilder: AbstractResponseBuilder?, operationParser: OperationBuilder?, requestMappingHandlerMapping: RequestMappingInfoHandlerMapping?, openApiCustomisers: Optional<MutableList<OpenApiCustomiser>>?) :
+        OpenApiResource(openAPIBuilder, requestBuilder, responseBuilder, operationParser, requestMappingHandlerMapping, openApiCustomisers)

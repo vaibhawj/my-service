@@ -1,5 +1,7 @@
 package com.myservice
 
+import com.google.gson.Gson
+import com.myservice.config.Example
 import com.myservice.controller.dto.Person
 import com.myservice.dal.PersonRepository
 import com.ninjasquad.springmockk.MockkBean
@@ -11,11 +13,15 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.test.web.reactive.server.EntityExchangeResult
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
 import reactor.core.publisher.toMono
+import java.io.File
+import java.io.FileWriter
 import java.util.*
 import com.myservice.dal.dto.Person as PersonDB
+
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(classes = [MyServiceApplication::class])
@@ -44,7 +50,48 @@ class MyServiceApplicationTests {
                     {
                         "id": $id
                     }
-                """.trimIndent())
+                """.trimIndent()).consumeWith {
+                    document(it, "person-controller", "create", "200 OK")
+                }
     }
 
+    @Test
+    fun `find a person successfully`() {
+        val id = "c89429aa-10be-11ea-8d71-362b9e155667"
+        every { personRepository.findById(UUID.fromString(id)) }.returns(PersonDB(UUID.fromString(id), "John", "Doe").toMono())
+
+        webTestClient.get().uri("/persons/$id")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .exchange()
+                .expectStatus()
+                .isOk
+                .expectBody().json("""
+                    {
+                        "id": $id,
+                        "firstName": "John",
+                        "lastName": "Doe"
+                    }
+                """.trimIndent()).consumeWith {
+                    document(it, "person-controller", "find", "200 OK")
+                }
+    }
+
+    @Test
+    fun `fina a person fails`() {
+        val id = "c89429aa-10be-11ea-8d71-362b9e155667"
+        every { personRepository.findById(UUID.fromString(id)) }.returns(Mono.empty())
+
+        webTestClient.get().uri("/persons/$id")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .exchange()
+                .expectStatus()
+                .isNotFound
+                .expectBody().json("""
+                    {
+                        "reason": "User not found"
+                    }
+                """.trimIndent()).consumeWith {
+                    document(it, "person-controller", "find", "404 Not Found")
+                }
+    }
 }
