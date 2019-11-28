@@ -7,6 +7,7 @@ import com.myservice.controller.dto.CreateResponse
 import io.swagger.v3.oas.annotations.Operation
 import org.reactivestreams.Publisher
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -21,28 +22,28 @@ class PersonController {
 
     @GetMapping(value = ["/{id}"], produces = ["application/json"])
     @Operation(summary = "Find a person", description = "Finds a person with the id")
-    fun find(@PathVariable id: UUID): Mono<Person> {
-        return service.findPerson(id)
+    fun find(@PathVariable id: UUID): Mono<ResponseEntity<Person>> {
+        return service.findPerson(id).map { ResponseEntity.ok(it) }
     }
 
     @GetMapping(produces = ["application/json"])
     @Operation(summary = "List persons", description = "List all the people")
-    fun list(): Flux<Person> {
-        return service.findAll()
+    fun list(): Mono<ResponseEntity<List<Person>>> {
+        return service.findAll().collectList().map { ResponseEntity.ok(it) }
     }
 
     @PostMapping(consumes = ["application/json"], produces = ["application/json"])
     @Operation(summary = "Create a person", description = "Creates a person with inputs")
-    fun create(@RequestBody personInput:  Mono<Person>): Mono<CreateResponse> {
+    fun create(@RequestBody personInput:  Mono<Person>): Mono<ResponseEntity<CreateResponse>> {
         return service.createPerson(personInput).map {
-            CreateResponse(it)
+            ResponseEntity.ok(CreateResponse(it))
         }
     }
 
     @PatchMapping(value = ["/{id}"], consumes = ["application/json"], produces = ["application/json"])
     @Operation(summary = "Update a person", description = "Updates a person using patch")
-    fun patch(@PathVariable id: UUID, @RequestBody personPatch: JsonPatch): Mono<Person> {
-        return service.patchPerson(id, personPatch)
+    fun patch(@PathVariable id: UUID, @RequestBody personPatch: JsonPatch): Mono<ResponseEntity<Person>> {
+        return service.patchPerson(id, personPatch).map { ResponseEntity.ok(it) }
     }
 
 }

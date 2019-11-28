@@ -17,4 +17,11 @@ class PersonControllerAdvice {
     fun handlePersonNotFound(): ErrorResponse {
         return ErrorResponse("User not found")
     }
+
+    @ExceptionHandler(Throwable::class)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    fun handleUnexpectedError(): ErrorResponse {
+        return ErrorResponse("Unexpected error")
+    }
 }

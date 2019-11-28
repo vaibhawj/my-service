@@ -10,6 +10,7 @@ import org.springdoc.core.AbstractParameterBuilder
 import org.springdoc.core.AbstractRequestBuilder
 import org.springdoc.core.OperationBuilder
 import org.springdoc.core.RequestBodyBuilder
+import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
 import org.springframework.web.method.HandlerMethod
 import java.io.FileReader
@@ -20,6 +21,7 @@ import java.nio.file.Paths
 import io.swagger.v3.oas.models.examples.Example as OpenApiExample
 
 
+@Primary
 @Component
 class CustomRequestBuilder(parameterBuilder: AbstractParameterBuilder, requestBodyBuilder: RequestBodyBuilder,
                            operationBuilder: OperationBuilder) : AbstractRequestBuilder(parameterBuilder, requestBodyBuilder, operationBuilder) {
@@ -55,7 +57,6 @@ class CustomRequestBuilder(parameterBuilder: AbstractParameterBuilder, requestBo
     }
 
     private fun populateRequestExample(example: Example, operation: Operation) {
-        operation.requestBody?.content?.clear()
 
         if (!example.requestBody.isNullOrBlank()) {
             operation.requestBody.content["application/json"] = MediaType().schema(Schema<Any>()).addExamples(example.exampleName, OpenApiExample().value(example.requestBody))
@@ -63,11 +64,9 @@ class CustomRequestBuilder(parameterBuilder: AbstractParameterBuilder, requestBo
     }
 
     private fun populateResponseExample(operation: Operation, example: Example) {
-        operation.responses?.clear()
         val status = example.status.toString()
 
         if (!example.responseBody.isNullOrBlank()) {
-            ApiResponse().description(status).content.clear()
             operation.responses[status] = ApiResponse().description(status).content(
                     Content().addMediaType("application/json", MediaType().schema(Schema<Any>())
                             .addExamples(example.exampleName, OpenApiExample().value(example.responseBody))))

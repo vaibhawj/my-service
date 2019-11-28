@@ -1,7 +1,5 @@
 package com.myservice
 
-import com.google.gson.Gson
-import com.myservice.config.Example
 import com.myservice.controller.dto.Person
 import com.myservice.dal.PersonRepository
 import com.ninjasquad.springmockk.MockkBean
@@ -13,12 +11,9 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.test.web.reactive.server.EntityExchangeResult
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
 import reactor.core.publisher.toMono
-import java.io.File
-import java.io.FileWriter
 import java.util.*
 import com.myservice.dal.dto.Person as PersonDB
 
@@ -56,6 +51,27 @@ class MyServiceApplicationTests {
     }
 
     @Test
+    fun `post person fails`() {
+        val id = "c89429aa-10be-11ea-8d71-362b9e155667"
+        every { personRepository.save(any<PersonDB>()) }.throws(RuntimeException("Server error"))
+
+        webTestClient.post().uri("/persons")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(Person(firstName = "John", lastName = "Doe")), Person::class.java)
+                .exchange()
+                .expectStatus()
+                .is5xxServerError
+                .expectBody().json("""
+                    {
+                        "reason": "Unexpected error"
+                    }
+                """.trimIndent()).consumeWith {
+                    document(it, "person-controller", "create", "500 Error")
+                }
+    }
+
+    @Test
     fun `find a person successfully`() {
         val id = "c89429aa-10be-11ea-8d71-362b9e155667"
         every { personRepository.findById(UUID.fromString(id)) }.returns(PersonDB(UUID.fromString(id), "John", "Doe").toMono())
@@ -77,7 +93,7 @@ class MyServiceApplicationTests {
     }
 
     @Test
-    fun `fina a person fails`() {
+    fun `find a person fails`() {
         val id = "c89429aa-10be-11ea-8d71-362b9e155667"
         every { personRepository.findById(UUID.fromString(id)) }.returns(Mono.empty())
 
