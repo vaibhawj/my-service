@@ -10,6 +10,8 @@
 .settings
 .springBeans
 .sts4-cache
+.sonar
+.sonar-cache
 
 ### IntelliJ IDEA ###
 .idea
