@@ -35,8 +35,8 @@ class MyServiceApplicationTests {
         every { personRepository.save(any<PersonDB>()) }.returns(PersonDB(UUID.fromString(id)).toMono())
 
         webTestClient.post().uri("/persons")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .body(Mono.just(Person(firstName = "John", lastName = "Doe")), Person::class.java)
                 .exchange()
                 .expectStatus()
@@ -45,19 +45,16 @@ class MyServiceApplicationTests {
                     {
                         "id": $id
                     }
-                """.trimIndent()).consumeWith {
-                    document(it, "person-controller", "create", "200 OK")
-                }
+                """.trimIndent())
     }
 
     @Test
     fun `post person fails`() {
-        val id = "c89429aa-10be-11ea-8d71-362b9e155667"
         every { personRepository.save(any<PersonDB>()) }.throws(RuntimeException("Server error"))
 
         webTestClient.post().uri("/persons")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .body(Mono.just(Person(firstName = "John", lastName = "Doe")), Person::class.java)
                 .exchange()
                 .expectStatus()
@@ -66,9 +63,7 @@ class MyServiceApplicationTests {
                     {
                         "reason": "Unexpected error"
                     }
-                """.trimIndent()).consumeWith {
-                    document(it, "person-controller", "create", "500 Error")
-                }
+                """.trimIndent())
     }
 
     @Test
@@ -77,7 +72,7 @@ class MyServiceApplicationTests {
         every { personRepository.findById(UUID.fromString(id)) }.returns(PersonDB(UUID.fromString(id), "John", "Doe").toMono())
 
         webTestClient.get().uri("/persons/$id")
-                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus()
                 .isOk
@@ -87,9 +82,7 @@ class MyServiceApplicationTests {
                         "firstName": "John",
                         "lastName": "Doe"
                     }
-                """.trimIndent()).consumeWith {
-                    document(it, "person-controller", "find", "200 OK")
-                }
+                """.trimIndent())
     }
 
     @Test
@@ -98,7 +91,7 @@ class MyServiceApplicationTests {
         every { personRepository.findById(UUID.fromString(id)) }.returns(Mono.empty())
 
         webTestClient.get().uri("/persons/$id")
-                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus()
                 .isNotFound
@@ -106,8 +99,6 @@ class MyServiceApplicationTests {
                     {
                         "reason": "User not found"
                     }
-                """.trimIndent()).consumeWith {
-                    document(it, "person-controller", "find", "404 Not Found")
-                }
+                """.trimIndent())
     }
 }
