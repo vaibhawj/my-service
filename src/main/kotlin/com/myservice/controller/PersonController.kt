@@ -3,20 +3,21 @@ package com.myservice.controller
 import com.github.fge.jsonpatch.JsonPatch
 import com.myservice.controller.dto.CreateResponse
 import com.myservice.controller.dto.Person
-import com.myservice.service.PersonService
+import com.myservice.service.IPersonService
 import io.swagger.v3.oas.annotations.Operation
-import org.springframework.beans.factory.annotation.Autowired
+import javafx.beans.NamedArg
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
 import java.util.*
+import javax.annotation.Resource
 
 @RestController
 @RequestMapping("/persons")
 class PersonController {
 
-    @Autowired
-    lateinit var service: PersonService
+    @Resource(name = "\${service.name}")
+    lateinit var service: IPersonService
 
     @GetMapping(value = ["/{id}"], produces = ["application/json"])
     @Operation(summary = "Find a person", description = "Finds a person with the id")

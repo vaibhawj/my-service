@@ -1,8 +1,6 @@
 package com.myservice.controller
 
 import com.myservice.MyServiceApplication
-import org.cassandraunit.utils.EmbeddedCassandraServerHelper
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,11 +18,6 @@ internal class PersonControllerTest {
 
     @Autowired
     private lateinit var client: WebTestClient
-
-    @BeforeEach
-    fun setup() {
-        EmbeddedCassandraServerHelper.startEmbeddedCassandra()
-    }
 
     @Test
     fun test() {

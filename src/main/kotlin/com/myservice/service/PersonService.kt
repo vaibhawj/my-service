@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.fge.jsonpatch.JsonPatch
 import org.reactivestreams.Publisher
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -17,15 +18,16 @@ import reactor.core.publisher.toMono
 import java.util.*
 
 
-@Service
-class PersonService {
+@Service("oldService")
+@Primary
+class PersonService : IPersonService {
 
     @Autowired
     private lateinit var personRepository: PersonRepository
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
-    fun createPerson(personInput: Mono<Person>): Mono<UUID> {
+    override fun createPerson(personInput: Mono<Person>): Mono<UUID> {
         return personInput.flatMap { p ->
             var contact = mutableMapOf<String, String>()
             p.contact?.homePhone?.let { contact.put("homePhone", it) }
@@ -45,7 +47,7 @@ class PersonService {
         }
     }
 
-    fun findPerson(id: UUID): Mono<Person> {
+    override fun findPerson(id: UUID): Mono<Person> {
         return personRepository.findById(id).switchIfEmpty(Mono.error(NotFoundException())).map { p ->
             Person(
                     id = p.id,
@@ -58,7 +60,7 @@ class PersonService {
 
     }
 
-    fun patchPerson(id: UUID, personPatchRequest: JsonPatch): Mono<Person> {
+    override fun patchPerson(id: UUID, personPatchRequest: JsonPatch): Mono<Person> {
         val personStored = personRepository.findById(id)
 
         val personUpdated = personStored.map { p ->
@@ -94,7 +96,7 @@ class PersonService {
         }
     }
 
-    fun findAll(): Flux<Person> {
+    override fun findAll(): Flux<Person> {
         return personRepository.findAll()
                 .switchIfEmpty { it.onError(NotFoundException()) }
                 .map {
