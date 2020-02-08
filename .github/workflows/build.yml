@@ -18,7 +18,7 @@ jobs:
     - name: Build and Publish the Docker image
       uses: mr-smithers-excellent/docker-build-push@v2
       with:
-        image: vaibhawj/my-service
+        image: vaibhawj/my-service/my-service
         registry: docker.pkg.github.com
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
