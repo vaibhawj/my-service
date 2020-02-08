@@ -1,0 +1,15 @@
+name: Docker
+
+on: [push]
+
+jobs:
+  dockerize:
+    - needs: build
+    - name: Build the Docker image
+      run: docker build -t vaibhawj/my-service:${GITHUB_SHA::8} .
+    - name: Login to docker repo
+      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+    - name: Publish the Docker image
+      run: docker push vaibhawj/my-service:${GITHUB_SHA::8}
+
+
