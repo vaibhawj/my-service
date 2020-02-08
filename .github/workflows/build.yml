@@ -1,4 +1,4 @@
-name: Java CI
+name: CI/CD
 
 on: [push]
 
@@ -15,11 +15,6 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
+    - name: Build the Docker image
+      run: docker build -t vaibhawj/my-service:${GITHUB_SHA::8} .
 
-  dockerize:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build the Docker image
-        run: docker build -t vaibhawj/my-service:${GITHUB_SHA::8} .
