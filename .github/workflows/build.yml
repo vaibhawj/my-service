@@ -16,7 +16,7 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
     - name: Build and Publish the Docker image
-    - uses: mr-smithers-excellent/docker-build-push@v2
+      uses: mr-smithers-excellent/docker-build-push@v2
       with:
         image: docker.pkg.github.com/vaibhawj/my-service
         registry: docker.pkg.github.com
