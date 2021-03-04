@@ -2,7 +2,7 @@ spring:
   data:
     cassandra:
       keyspaceName: myDB
-      contactPoint: localhost
+      contactPoint: ${DB_URL}
       port: 9042
-      username: cassandra
-      password: cassandra
+      username: ${DB_USER}
+      password: ${DB_PASSWORD}

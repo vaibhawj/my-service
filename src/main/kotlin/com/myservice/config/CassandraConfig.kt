@@ -42,6 +42,8 @@ class CassandraConfig(
     }
 
     override fun cluster(): CassandraClusterFactoryBean {
+        println("usrname: " + username)
+        println("contactPoint: " + contactPoint)
         val clusterFactoryBean = super.cluster()
         clusterFactoryBean.setUsername(username)
         clusterFactoryBean.setPassword(password)
