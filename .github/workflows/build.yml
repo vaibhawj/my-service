@@ -15,6 +15,14 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
+  scan:
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        ref: ${{ github.head_ref }} // necessary for pull request workflow trigger
+    - name: trufflehog-actions-scan
+      uses: edplato/trufflehog-actions-scan@master
 
 
 
