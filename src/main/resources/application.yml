@@ -5,4 +5,4 @@ spring:
       contactPoint: ${DB_URL}
       port: 9042
       username: ${DB_USER}
-      password: readlpassword
+      password: wA&+T6A-$D7d&R)k
